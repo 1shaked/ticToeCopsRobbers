@@ -15,15 +15,16 @@ void ComputerMoveTicTacToe(void);
 void TicTacToe(void);
 void CopsAndRobbers(void);
 void RobberMove(void);
-void PrintBoard(void);
+void PrintBoard(int row, int col);
 int SetRows(void);
 int SetColumns(int row);
+int IsValidLocation(int row,int col , int userChoiseRow, int userChoiseCol);
+int IsLocationAvailable(int v, int includeRobber);
+int IsLocationUnAvailable(int v, int includeRobber);
+void PrintLocationForrmated(int v);
 char firstName[10];
 char lastName[10];
-// TODO: chake if change change the board dynamicly and pass it
-int board [MAX_SIZE][MIN_SIZE];
-int row;
-int col;
+int board [MAX_SIZE][MAX_SIZE];
 int main(int argc, const char * argv[]) {
     Games();
     return 0;
@@ -32,7 +33,7 @@ int main(int argc, const char * argv[]) {
 void Games(void) {
     
     SetNames();
-    printf("Hello %s %s, what would you like to play? (1) Cops and Robbers (2) Tic tac toe (3) Exit", firstName, lastName);
+    printf("Hello %s %s, what would you like to play? (1) Cops and Robbers (2) Tic tac toe (3) Exit\n", firstName, lastName);
     int userInput = -1;
     while(!(userInput > 0 && userInput < 4)) {
         scanf("%d", &userInput);
@@ -61,16 +62,19 @@ void CopsAndRobbers(void) {
         
      */
     printf("Let's choose the size:\n");
-    row = SetRows();
-    col = SetColumns(row);
+    int row = SetRows();
+    int col = SetColumns(row);
     printf("row = %d col =  %d \n", row, col);
     printf("How many cops would you like (1-5)?\n");
     int cops = 0;
     scanf("%d", &cops);
+    const int copsSize = cops; // this is the amount of cops we have and will contril all loop over the cops
+    int coptsLocations [5][2];
+    //printf("aaaa %d ", coptsLocations[1]);
     
-    //int coptsLocations [cops][2];
-    //int roobberLocation [2] = {3, 4};
-    int board [row][col];
+    int roobberLocation [2] = {3, 4};
+    printf("roobberLocation = %d \n", roobberLocation[0]);
+    // TODO: check if needed
     // init bored
     int rowIndex = 0;
     for (; rowIndex <= row; rowIndex++) {
@@ -80,12 +84,24 @@ void CopsAndRobbers(void) {
     // set robber location
     board[3][4] = -1;
     int copIndex = 0;
-    for (; copIndex <= cops; copIndex++) {
+    while(copIndex < copsSize) {
         // get the user choice and validate it
         printf("Let's choose cell:\n");
         int rowChoise, colChoise;
         scanf("%d %d", &rowChoise, &colChoise);
+        int isValid = IsValidLocation(row, col,rowChoise, colChoise);
+        if (isValid) {
+            board[rowChoise][colChoise] = 1;
+            printf("%d \n", board[rowChoise][colChoise]);
+            coptsLocations[copIndex][0] = rowChoise;
+            coptsLocations[copIndex][1] = colChoise;
+            copIndex++;
+        } else printf("Illegal choice!\n");
     }
+    // starting the game affter init
+    printf("Let’s play!\n");
+    printf("Initial states:\n");
+    PrintBoard(row, col);
 }
 void ComputerMoveTicTacToe(void) {
     
@@ -93,7 +109,20 @@ void ComputerMoveTicTacToe(void) {
 void TicTacToe(void) {
     
 }
-void PrintBoard (void) {}
+/*************************************************************************
+Function name: PrintBoard
+Input: int row, int col
+Output: int
+The function operation: print the bord in the givin input range the range is the bored play range game
+************************************************************************/
+void PrintBoard (int row, int col) {
+    int rowIndex = 0;
+    for (; rowIndex < row; rowIndex++) {
+        int colIndex = 0;
+        for(; colIndex < col; colIndex++) PrintLocationForrmated(board[rowIndex][colIndex]);
+        printf("\n");
+    }
+}
 int SetRows(void) {
     int row;
     scanf("%d" , &row);
@@ -110,3 +139,66 @@ int SetColumns(int row) {
     return col;
 }
 
+int IsValidLocation(int row,int col , int userChoiseRow, int userChoiseCol) {
+    if (IsLocationUnAvailable(board[userChoiseRow][userChoiseCol], 1)) return 0;
+    // col section
+    int startCol = userChoiseCol - 2;
+    int previos;
+    int next;
+    if (startCol >= 0) {
+        // we can check next two
+        previos = IsLocationUnAvailable(board[userChoiseRow][startCol],0);
+        next = IsLocationUnAvailable(board[userChoiseRow][startCol+1],0);
+        if (previos && next) return 0;
+    }
+    startCol = startCol + 1;
+    if (startCol >= 0 && startCol + 3 < col ) {
+        previos = IsLocationUnAvailable(board[userChoiseRow][startCol],0);
+        next = IsLocationUnAvailable(board[userChoiseRow][startCol+2],0);
+        if (previos && next) return 0;
+    }
+    startCol = startCol + 2;
+    if (startCol+ 2 < col) {
+        previos = IsLocationUnAvailable(board[userChoiseRow][startCol],0);
+        next = IsLocationUnAvailable(board[userChoiseRow][startCol+1],0);
+        if (previos && next) return 0;
+    }
+    // checking the rwo if valid
+    int startRow = userChoiseRow - 2;
+    if (startRow >= 0) {
+        previos = IsLocationUnAvailable(board[startRow][userChoiseCol],0);
+        next = IsLocationUnAvailable(board[startRow + 1][userChoiseCol],0);
+        if (previos && next) return 0;
+    }
+    startRow  = startRow + 1;
+    if (startCol >= 0 && startRow+3 < col) {
+        previos = IsLocationUnAvailable(board[userChoiseRow][userChoiseCol],0);
+        next = IsLocationUnAvailable(board[startRow + 2][userChoiseCol],0);
+        if (previos && next) return 0;
+    }
+    startRow = startRow + 2;
+    if (startCol +2 < col) {
+        previos = IsLocationUnAvailable(board[startRow][userChoiseCol],0);
+        next = IsLocationUnAvailable(board[startRow+1][userChoiseCol],0);
+        if (previos && next) return 0;
+    }
+    return 1;
+}
+/*************************************************************************
+Function name: IsLocationAvailable
+Input: int v, int includeRobber
+Output: int
+The function operation: check if a cop or a robber is in the location if you give include robber than we will check if a robber is also in the borad location
+************************************************************************/
+int IsLocationAvailable(int v, int includeRobber) {
+    if (includeRobber) return !(v == 1 || v == -1);
+    return v != 1;
+}
+int IsLocationUnAvailable(int v, int includeRobber) {
+    return !IsLocationAvailable(v,includeRobber);
+}
+void PrintLocationForrmated(int v) {
+    if (v == 1) printf("C");
+    else if (v == -1) printf("R");
+    else printf("-");
+}
