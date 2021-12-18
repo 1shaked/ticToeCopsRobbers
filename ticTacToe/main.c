@@ -74,7 +74,8 @@ void CopsAndRobbers(void) {
     int row = SetRows();
     int col = SetColumns(row);
     int maxRowIndex = row  - 1, maxColIndex = col - 1;
-    printf("row = %d col =  %d \n", row, col);
+    printf("%d %d\n", row, col);
+    PrintBoard(row, col);
     printf("How many cops would you like (1-5)?\n");
     int cops = 0;
     scanf("%d", &cops);
@@ -82,8 +83,8 @@ void CopsAndRobbers(void) {
     int coptsLocations [5][2];
     //printf("aaaa %d ", coptsLocations[1]);
     
-    int roobberLocation [2] = {3, 4};
-    printf("roobberLocation = %d \n", roobberLocation[0]);
+    int roobberLocation [2] = {4, 4};
+    
     // init bored
     int rowIndex = 0;
     for (; rowIndex <= row; rowIndex++) {
@@ -91,7 +92,7 @@ void CopsAndRobbers(void) {
         for (; colIndex <= col; colIndex++) board[rowIndex][colIndex] = 0;
     }
     // set robber location
-    board[3][4] = -1;
+    board[4][4] = -1;
     int copIndex = 0;
     while(copIndex < copsSize) {
         // get the user choice and validate it
@@ -114,9 +115,11 @@ void CopsAndRobbers(void) {
     
     
     int isCopTurn = 1;
+    int turns = 0;
 
     while (1) {
         if (isCopTurn) {
+            turns = turns + 1;
             printf("Cops\n");
             int copsTurnIndex = 0;
             for (; copsTurnIndex < copsSize; copsTurnIndex++) {
@@ -139,19 +142,27 @@ void CopsAndRobbers(void) {
             char actionMovement; // a - left w - up r - d down - s
             printf("Select a cop[row,col] and a direction\n");
             scanf("%d %d %c", &rowLocationChoice, &colLocationChoice , &actionMovement);
-            int isValidLocation  = IsLocationUnAvailable(board[rowLocationChoice][colLocationChoice], 0);
+            int isValidLocation  = IsLocationUnAvailable(board[rowLocationChoice][colLocationChoice], 0) && rowLocationChoice < maxRowIndex + 1 && colLocationChoice < maxColIndex + 1 && rowLocationChoice > -1
+            && colLocationChoice > -1;
             int isValidMovement = actionMovement == *leftAction || actionMovement == *rightAction|| actionMovement == *downAction || actionMovement == *upAction;
             // checking if the input is valid
             if (isValidLocation && isValidMovement) {
                 // calculate the location need to lend
                 MoveCop(rowLocationChoice, colLocationChoice, actionMovement, maxRowIndex, maxColIndex, copsSize, coptsLocations);
                 // checking if the location is valid
-                isCopTurn = 0;
+                
             }
+            else printf("you lose this turn\n");
+            isCopTurn = 0;
             int robberLocRow = roobberLocation[0], robberLocCol =  roobberLocation[1];
             if (board[robberLocRow][robberLocCol] == 1 ) {
                 // finishe the game
+                printf("The cops won!\n");
                 // printing what evet
+                break;
+            }
+            if (turns > 30) {
+                printf("The robber managed to escape!\n");
                 break;
             }
         }
@@ -197,7 +208,6 @@ void CopsAndRobbers(void) {
             // need to check which direaction is the closest to.
             int copIndexClose = locationArrayDistances[closestCopIndex][1];
             char action = ClacRobberDireaction(coptsLocations[copIndexClose][0],coptsLocations[copIndexClose][1], roobberLocation[0], roobberLocation[1], maxRowIndex, maxColIndex);
-            printf("%c \n ", action);
             MoveRobber(roobberLocation, action);
             PrintBoard(row, col);
             isCopTurn = 1;
@@ -236,9 +246,7 @@ void MoveCop(int rowChoise, int colChoise, char action, int rowSize, int colSize
                 break;
             }
         }
-    } else {
-        printf("you lose this turn");
-    }
+    } else printf("you lose this turn\n");
 }
 void ComputerMoveTicTacToe(void) {
     
@@ -277,6 +285,7 @@ int SetColumns(int row) {
 }
 
 int IsValidLocation(int row,int col , int userChoiseRow, int userChoiseCol) {
+    if (userChoiseRow >= row || userChoiseCol >= col ) return 0;
     if (IsLocationUnAvailable(board[userChoiseRow][userChoiseCol], 1)) return 0;
     // col section
     int startCol = userChoiseCol - 2;
