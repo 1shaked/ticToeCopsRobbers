@@ -11,7 +11,9 @@
 
 #define MAX_SIZE 30
 #define MIN_SIZE 5
-
+#define TIC_TAC_TOE_DIMENSIONS 3
+#define TIC_TAC_EMPTY_CHAR '-'
+#define TIC_TAC_USER_CHAR 'U'
 void Games(void);
 void SetNames(void);
 void ComputerMoveTicTacToe(void);
@@ -29,6 +31,10 @@ void MoveCop(int rowChoise, int colChoise, char action, int rowSize, int colSize
 float CalcDistance(int x1, int y1, int x2, int y2);
 char ClacRobberDireaction(int copRow, int copCol, int robberRow, int robberCol, int maxRow, int maxCol);
 void MoveRobber(int robberLocation[2], char action);
+int isThereWinningStrike(char board [3][3]);
+int IsInBoardTicTac(int row, int col);
+int IsLocationAvailableTicTacToe (char v);
+int IsLocationUnAvailableTicTacToe (char v);
 
 char firstName[10];
 char lastName[10];
@@ -252,6 +258,35 @@ void ComputerMoveTicTacToe(void) {
     
 }
 void TicTacToe(void) {
+    char ticTacToe [3][3] = { };
+    int i = 0;
+    for (; i < 3; i++) {
+        int j = 0;
+        for (; j < 2; j++) ticTacToe[i][j] = TIC_TAC_EMPTY_CHAR;
+    }
+    printf("%c", ticTacToe[2][2]);
+    // isThereWinningStrike(ticTacToe);
+    int isComputerTurn = 0;
+    while (isThereWinningStrike(ticTacToe)) {
+        if (isComputerTurn) {
+            // play computer
+            printf("computer played");
+        } else {
+            // play user
+            printf("Select a square (row, col)\n");
+            int row, col;
+            scanf("%d %d", &row, &col);
+            // check if valid location
+            if (IsInBoardTicTac(row, col)) {
+                printf("Outside of board\n");
+                continue;
+            } else if (IsLocationUnAvailableTicTacToe(ticTacToe[row][col])) {
+                printf("Invalid square\n");
+                continue;
+            }
+            ticTacToe[row][col] = TIC_TAC_USER_CHAR;
+        }
+    }
     
 }
 /*************************************************************************
@@ -337,6 +372,7 @@ Output: int
 The function operation: check if a cop or a robber is in the location if you give include robber than we will check if a robber is also in the borad location
 ************************************************************************/
 int IsLocationAvailable(int v, int includeRobber) {
+    // return includeRobber ? !(v == 1 || v == -1) : v != 1;
     if (includeRobber) return !(v == 1 || v == -1);
     return v != 1;
 }
@@ -385,4 +421,25 @@ void MoveRobber(int robberLocation[2], char action) {
     robberLocation[0] = newLocationRow;
     robberLocation[1] = newLocationCol;
 }
-
+int isThereWinningStrike(char board [3][3]) {
+    int topLeft = board[0][0], topMiddle = board[0][1], topRight = board[0][2];
+    int middleLeft = board[1][0], center = board[1][1], middleRight = board[1][2];
+    int bottomLeft = board[2][0], bottomMiddle = board[2][1], bottomRight = board[2][2];
+    int horizontal = (topLeft == topMiddle && topRight == topMiddle) ||
+        (middleLeft == center && center == middleRight) ||
+        (bottomLeft == bottomMiddle && bottomMiddle == bottomRight);
+    int vertical = (topLeft == middleLeft && middleLeft == bottomLeft) ||
+    (topMiddle == center && center == bottomMiddle) ||
+    (topRight == middleRight && middleRight == bottomRight);
+    int diagonal = (topLeft == center && center == bottomRight) || (topRight == center && center == bottomLeft);
+    return horizontal || vertical || diagonal;
+}
+int IsInBoardTicTac(int row, int col) {
+    return row < 3 && row > -1 && col < 3 && col > -1;
+}
+int IsLocationAvailableTicTacToe (char v) {
+    return v == TIC_TAC_EMPTY_CHAR;
+}
+int IsLocationUnAvailableTicTacToe (char v) {
+    return !IsLocationAvailableTicTacToe(v);
+}
