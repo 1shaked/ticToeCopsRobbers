@@ -82,7 +82,6 @@ void CopsAndRobbers(void) {
     int row = SetRows();
     int col = SetColumns(row);
     int maxRowIndex = row  - 1, maxColIndex = col - 1;
-    printf("%d %d\n", row, col);
     PrintBoard(row, col);
     printf("How many cops would you like (1-5)?\n");
     int cops = 0;
@@ -91,7 +90,7 @@ void CopsAndRobbers(void) {
     int coptsLocations [5][2];
     //printf("aaaa %d ", coptsLocations[1]);
     
-    int roobberLocation [2] = {4, 3};
+    
     
     // init bored
     int rowIndex = 0;
@@ -100,11 +99,12 @@ void CopsAndRobbers(void) {
         for (; colIndex <= col; colIndex++) board[rowIndex][colIndex] = 0;
     }
     // set robber location
-    board[4][3] = -1;
+    board[3][2] = -1;
+    int roobberLocation [2] = {3, 2};
     int copIndex = 0;
     while(copIndex < copsSize) {
         // get the user choice and validate it
-        printf("Let's choose cell:\n");
+        printf("Let's choose cells:\n");
         int rowChoise, colChoise;
         scanf("%d %d", &rowChoise, &colChoise);
         int isValid = IsValidLocation(row, col,rowChoise, colChoise);
@@ -117,7 +117,7 @@ void CopsAndRobbers(void) {
         } else printf("Illegal choice!\n");
     }
     // starting the game affter init
-    printf("Let’s play!\n");
+    printf("Let's play!\n");
     printf("Initial states:\n");
     PrintBoard(row, col);
     
@@ -128,7 +128,7 @@ void CopsAndRobbers(void) {
     while (1) {
         if (isCopTurn) {
             turns = turns + 1;
-            printf("Cops\n");
+            printf("Cops:\n");
             int copsTurnIndex = 0;
             for (; copsTurnIndex < copsSize; copsTurnIndex++) {
                 int rowLocationCop = coptsLocations[copsTurnIndex][0];
@@ -175,7 +175,7 @@ void CopsAndRobbers(void) {
             }
         }
         else {
-            printf("Robbers\n");
+            printf("Robbers:\n");
             // calc the robber location need to move
             float locationArrayDistances [4][2]; // distance index
             int copsIndexRooberTurn = 0, iterCount = 0;
