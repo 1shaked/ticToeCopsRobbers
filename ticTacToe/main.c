@@ -39,6 +39,7 @@ int IsLocationUnAvailableTicTacToe (char v);
 void GoToNextLocationTicTacBoard (int startingLocation[2]);
 void PirintTicTacBoard(char board[3][3]);
 void OrderCopsArray(int copsLocation [5][2], int maxRow, int maxCol);
+int IsBoardFull(char board [3][3]);
 char firstName[10];
 char lastName[10];
 int board [MAX_SIZE][MAX_SIZE];
@@ -271,6 +272,7 @@ void TicTacToe(void) {
     // isThereWinningStrike(ticTacToe);
     int computerStartingPoint [2] = {0,0};
     int isComputerTurn = 0;
+    PirintTicTacBoard(ticTacToe);
     while (1) {
         
         if (isComputerTurn) {
@@ -315,6 +317,7 @@ void TicTacToe(void) {
             }
             ticTacToe[row][col] = TIC_TAC_USER_CHAR;
             isComputerTurn = 1;
+            PirintTicTacBoard(ticTacToe);
             
         }
         int isUserWinning = isThereWinningStrike(ticTacToe, TIC_TAC_USER_CHAR);
@@ -324,10 +327,14 @@ void TicTacToe(void) {
         }
         int isComputerWinning = isThereWinningStrike(ticTacToe, TIC_TAC_COMPUTER_CHAR);
         if (isComputerWinning) {
-            printf("%s %s has lost\n", firstName, lastName);
+            printf("%s %s has lost!\n", firstName, lastName);
             break;
         }
-        PirintTicTacBoard(ticTacToe);
+        if (IsBoardFull(ticTacToe)) {
+            // handle what happan when the board is full
+            printf("It was a tie!\n");
+            break;
+        }
     }
     
 }
@@ -523,5 +530,14 @@ void OrderCopsArray(int copsLocation [5][2], int maxRow, int maxCol) {
         }
     }
 }
-
+int IsBoardFull(char board [3][3]) {
+    int i = 0;
+    for (; i< 3; i++) {
+        int col = 0;
+        for (; col < 3; col++) {
+            if (board[i][col] == TIC_TAC_EMPTY_CHAR) return 0;
+        }
+    }
+    return 1;
+}
 
