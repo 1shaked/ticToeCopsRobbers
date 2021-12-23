@@ -1,9 +1,9 @@
-//
-//  main.c
-//  ticTacToe
-//
-//  Created by shaked chen on 05/12/2021.
-//
+/******************************************
+* Shaked Chen
+* 207253220
+* 83-120-01
+* Ex 2
+******************************************/
 
 #include <stdio.h>
 #include <math.h>
@@ -17,7 +17,6 @@
 #define TIC_TAC_COMPUTER_CHAR 'O'
 void Games(void);
 void SetNames(void);
-void ComputerMoveTicTacToe(void);
 void TicTacToe(void);
 void CopsAndRobbers(void);
 void RobberMove(void);
@@ -36,7 +35,7 @@ int IsThereWinningStrike(char board [3][3], char winType);
 int IsInBoardTicTac(int row, int col);
 int IsLocationAvailableTicTacToe (char v);
 int IsLocationUnAvailableTicTacToe (char v);
-void GoToNextLocationTicTacBoard (int startingLocation[2]);
+void ComputerMoveTicTacToe (int startingLocation[2]);
 void PirintTicTacBoard(char board[3][3]);
 void OrderCopsArray(int copsLocation [5][2], int maxRow, int maxCol);
 int IsBoardFull(char board [3][3]);
@@ -267,9 +266,6 @@ void MoveCop(int rowChoise, int colChoise, char action, int rowSize, int colSize
         }
     } else printf("you lose this turn\n");
 }
-void ComputerMoveTicTacToe(void) {
-    // TODO: MOVE THE FUNC TO HERE
-}
 /*************************************************************************
  Function name: MoveCop
  Input: void
@@ -295,7 +291,7 @@ void TicTacToe(void) {
             int available = 0;
             int locationFind = 0;
             for (; locationFind < 9; locationFind++) {
-                if(locationFind) GoToNextLocationTicTacBoard(computerStartingPoint);
+                if(locationFind) ComputerMoveTicTacToe(computerStartingPoint);
                 int value = ticTacToe[computerStartingPoint[0]][computerStartingPoint[1]];
                 available = IsLocationAvailableTicTacToe(value);
                 if (available) break;
@@ -305,8 +301,8 @@ void TicTacToe(void) {
                 computerStartingPoint[0] = rowStart;
                 computerStartingPoint[1] = colStart;
                 // init the next point
-                GoToNextLocationTicTacBoard(computerStartingPoint);
-                GoToNextLocationTicTacBoard(computerStartingPoint);
+                ComputerMoveTicTacToe(computerStartingPoint);
+                ComputerMoveTicTacToe(computerStartingPoint);
             } else {
                 // handle what happan when the board is full
                 printf("It was a tie!\n");
@@ -575,12 +571,12 @@ int IsLocationUnAvailableTicTacToe (char v) {
     return !IsLocationAvailableTicTacToe(v);
 }
 /*************************************************************************
- Function name: GoToNextLocationTicTacBoard
+ Function name: ComputerMoveTicTacToe
  Input:char v value in point
  Output: void
  The function operation: check is the location in not aviable tic tac toe game
  ************************************************************************/
-void GoToNextLocationTicTacBoard (int startingLocation[2]) {
+void ComputerMoveTicTacToe (int startingLocation[2]) {
     int row = startingLocation[0], col = startingLocation[1];
     if (col == row && row == 2) {
         startingLocation[0] = 0;

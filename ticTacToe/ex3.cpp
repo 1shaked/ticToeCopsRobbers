@@ -1,9 +1,9 @@
-//
-//  main.c
-//  ticTacToe
-//
-//  Created by shaked chen on 05/12/2021.
-//
+/******************************************
+* Shaked Chen
+* 207253220
+* 83-120-01
+* Ex 3
+******************************************/
 
 #include <stdio.h>
 #include <math.h>
@@ -17,7 +17,6 @@
 #define TIC_TAC_COMPUTER_CHAR 'O'
 void Games(void);
 void SetNames(void);
-void ComputerMoveTicTacToe(void);
 void TicTacToe(void);
 void CopsAndRobbers(void);
 void RobberMove(void);
@@ -32,11 +31,11 @@ void MoveCop(int rowChoise, int colChoise, char action, int rowSize, int colSize
 float CalcDistance(int x1, int y1, int x2, int y2);
 char ClacRobberDireaction(int copRow, int copCol, int robberRow, int robberCol, int maxRow, int maxCol);
 void MoveRobber(int robberLocation[2], char action);
-int isThereWinningStrike(char board [3][3], char winType);
+int IsThereWinningStrike(char board [3][3], char winType);
 int IsInBoardTicTac(int row, int col);
 int IsLocationAvailableTicTacToe (char v);
 int IsLocationUnAvailableTicTacToe (char v);
-void GoToNextLocationTicTacBoard (int startingLocation[2]);
+void ComputerMoveTicTacToe (int startingLocation[2]);
 void PirintTicTacBoard(char board[3][3]);
 void OrderCopsArray(int copsLocation [5][2], int maxRow, int maxCol);
 int IsBoardFull(char board [3][3]);
@@ -48,7 +47,12 @@ int main(int argc, const char * argv[]) {
     Games();
     return 0;
 }
-
+/*************************************************************************
+ Function name: Games
+ Input: void
+ Output: void
+ The function operation: choose the game and play it
+ ************************************************************************/
 void Games(void) {
     
     SetNames();
@@ -61,6 +65,12 @@ void Games(void) {
     else if (userInput == 1) CopsAndRobbers();
     else if (userInput == 2) TicTacToe();
 }
+/*************************************************************************
+ Function name: SetNames
+ Input: void
+ Output: void
+ The function operation: setting the names of the first and last name
+ ************************************************************************/
 void SetNames(void) {
     printf("Enter first name\n");
     scanf("%s", firstName);
@@ -68,18 +78,13 @@ void SetNames(void) {
     printf("Enter last name\n");
     scanf("%s", lastName);
 }
+/*************************************************************************
+ Function name: CopsAndRobbers
+ Input: void
+ Output: void
+ The function operation: playing the game of cops and robbers and control the operation
+ ************************************************************************/
 void CopsAndRobbers(void) {
-    /*
-     cops: [[x1, y1], [x2, y2], [x3, y3]]
-     robber: [x, y]
-     [----------------c------]
-     [------c----------------]
-     [----------c----c-------]
-     [--------------crc------]
-     [------------c--c-------]
-     [-------------c---------]
-     
-     */
     printf("Let's choose the size:\n");
     int row = SetRows();
     int col = SetColumns(row);
@@ -88,13 +93,9 @@ void CopsAndRobbers(void) {
     printf("How many cops would you like (1-5)?\n");
     int cops = 0;
     scanf("%d", &cops);
-    const int copsSize = cops; // this is the amount of cops we have and will contril all loop over the cops
+    // this is the amount of cops we have and will contril all loop over the cops
+    const int copsSize = cops;
     int coptsLocations [5][2];
-    //printf("aaaa %d ", coptsLocations[1]);
-    
-    
-    
-    // init bored
     int rowIndex = 0;
     for (; rowIndex <= row; rowIndex++) {
         int colIndex = 0;
@@ -226,6 +227,12 @@ void CopsAndRobbers(void) {
         
     }
 }
+/*************************************************************************
+ Function name: MoveCop
+ Input: rowChoise - your choise,  colChoise - your col chosie, action the action up down, rowSize, the size of the rows ,colSize,amount of cops and there location cops, int copsLocation
+ Output: void
+ The function operation: move the cop in the game
+ ************************************************************************/
 void MoveCop(int rowChoise, int colChoise, char action, int rowSize, int colSize,int cops, int copsLocation [5][2]) {
     int rowLocation = rowChoise, colLocation = colChoise;
     if (action == *upAction) {
@@ -259,9 +266,12 @@ void MoveCop(int rowChoise, int colChoise, char action, int rowSize, int colSize
         }
     } else printf("you lose this turn\n");
 }
-void ComputerMoveTicTacToe(void) {
-    
-}
+/*************************************************************************
+ Function name: MoveCop
+ Input: void
+ Output: void
+ The function operation: playing the game of tic tac tow
+ ************************************************************************/
 void TicTacToe(void) {
     char ticTacToe [3][3] = { };
     int i = 0;
@@ -269,7 +279,6 @@ void TicTacToe(void) {
         int j = 0;
         for (; j < 3; j++) ticTacToe[i][j] = TIC_TAC_EMPTY_CHAR;
     }
-    // isThereWinningStrike(ticTacToe);
     int computerStartingPoint [2] = {0,0};
     int isComputerTurn = 0;
     PirintTicTacBoard(ticTacToe);
@@ -282,7 +291,7 @@ void TicTacToe(void) {
             int available = 0;
             int locationFind = 0;
             for (; locationFind < 9; locationFind++) {
-                if(locationFind) GoToNextLocationTicTacBoard(computerStartingPoint);
+                if(locationFind) ComputerMoveTicTacToe(computerStartingPoint);
                 int value = ticTacToe[computerStartingPoint[0]][computerStartingPoint[1]];
                 available = IsLocationAvailableTicTacToe(value);
                 if (available) break;
@@ -292,8 +301,8 @@ void TicTacToe(void) {
                 computerStartingPoint[0] = rowStart;
                 computerStartingPoint[1] = colStart;
                 // init the next point
-                GoToNextLocationTicTacBoard(computerStartingPoint);
-                GoToNextLocationTicTacBoard(computerStartingPoint);
+                ComputerMoveTicTacToe(computerStartingPoint);
+                ComputerMoveTicTacToe(computerStartingPoint);
             } else {
                 // handle what happan when the board is full
                 printf("It was a tie!\n");
@@ -320,12 +329,12 @@ void TicTacToe(void) {
             PirintTicTacBoard(ticTacToe);
             
         }
-        int isUserWinning = isThereWinningStrike(ticTacToe, TIC_TAC_USER_CHAR);
+        int isUserWinning = IsThereWinningStrike(ticTacToe, TIC_TAC_USER_CHAR);
         if (isUserWinning) {
             printf("%s %s has won\n", firstName, lastName);
             break;
         }
-        int isComputerWinning = isThereWinningStrike(ticTacToe, TIC_TAC_COMPUTER_CHAR);
+        int isComputerWinning = IsThereWinningStrike(ticTacToe, TIC_TAC_COMPUTER_CHAR);
         if (isComputerWinning) {
             printf("%s %s has lost!\n", firstName, lastName);
             break;
@@ -353,6 +362,12 @@ void PrintBoard (int row, int col) {
     }
     printf("\n");
 }
+/*************************************************************************
+ Function name: SetRows
+ Input: void
+ Output: int
+ The function operation: get the number of row and return them
+ ************************************************************************/
 int SetRows(void) {
     int row;
     scanf("%d" , &row);
@@ -360,6 +375,12 @@ int SetRows(void) {
     else if (row < MIN_SIZE) return MIN_SIZE;
     return row;
 }
+/*************************************************************************
+ Function name: SetColumns
+ Input: int rows
+ Output: int
+ The function operation: get the number of cols and return them consider the rows
+ ************************************************************************/
 int SetColumns(int row) {
     int col;
     scanf("%d" , &col);
@@ -368,7 +389,12 @@ int SetColumns(int row) {
     else if ( col < MIN_SIZE) return MIN_SIZE;
     return col;
 }
-
+/*************************************************************************
+ Function name: IsValidLocation
+ Input: the anount of rows and col , the location chosed by the user
+ Output: int
+ The function operation: get the number of cols and return them consider the rows
+ ************************************************************************/
 int IsValidLocation(int row,int col , int userChoiseRow, int userChoiseCol) {
     if (userChoiseRow >= row || userChoiseCol >= col ) return 0;
     if (IsLocationUnAvailable(board[userChoiseRow][userChoiseCol], 1)) return 0;
@@ -426,28 +452,49 @@ int IsLocationAvailable(int v, int includeRobber) {
     if (includeRobber) return !(v == 1 || v == -1);
     return v != 1;
 }
+/*************************************************************************
+ Function name: IsLocationUnAvailable
+ Input: the value in the boarrd and do you want to include the rubber
+ Output: int
+ The function operation: chcek if the location in not available
+ ************************************************************************/
 int IsLocationUnAvailable(int v, int includeRobber) {
     return !IsLocationAvailable(v,includeRobber);
 }
+/*************************************************************************
+ Function name: PrintLocationForrmated
+ Input: int v value in point board
+ Output: void
+ The function operation:print the location the way we want with - R and C
+ ************************************************************************/
 void PrintLocationForrmated(int v) {
     if (v == 1) printf("C");
     else if (v == -1) printf("R");
     else printf("-");
 }
+/*************************************************************************
+ Function name: CalcDistance
+ Input: int x1, int y1, int x2, int y2
+ Output: float
+ The function operation:return the distance of two points
+ ************************************************************************/
 float CalcDistance(int x1, int y1, int x2, int y2) {
     // Calculating distance
     return sqrt(pow(x2 - x1, 2) +
                 pow(y2 - y1, 2) * 1.0);
 }
+/*************************************************************************
+ Function name: ClacRobberDireaction
+ Input:int copRow, int copCol, int robberRow, int robberCol, int maxRow, int maxCol
+ Output: char
+ The function operation:return the action the roober need to go to
+ ************************************************************************/
 char ClacRobberDireaction(int copRow, int copCol, int robberRow, int robberCol, int maxRow, int maxCol) {
     int minDistance = -1;
-    // need to check up movement
+    // check up movement down left and right
     float upDistance = IsLocationAvailable(board[robberRow - 1][robberCol], 0) && robberRow > 0 ? CalcDistance(copRow, copCol, robberRow - 1, robberCol) : minDistance ;
-    // need to down
     float downDistance = IsLocationAvailable(board[robberRow + 1][robberCol], 0) && robberRow < maxRow ? CalcDistance(copRow, copCol, robberRow + 1, robberCol) : minDistance;
-    // need to check left
     float leftDistance = IsLocationAvailable(board[robberRow][robberCol - 1], 0) && robberCol > 0 ? CalcDistance(copRow, copCol, robberRow, robberCol - 1) : minDistance;
-    // need to check right
     float rightDistance = IsLocationAvailable(board[robberRow][robberCol + 1], 0) && robberCol < maxCol ? CalcDistance(copRow, copCol, robberRow, robberCol + 1) : minDistance;
     float distances [4][2] = { {upDistance, *upAction} , {downDistance, *downAction}, {leftDistance, *leftAction}, {rightDistance, *rightAction}};
     // loop to sort the array and get the max distance
@@ -459,6 +506,12 @@ char ClacRobberDireaction(int copRow, int copCol, int robberRow, int robberCol, 
     if (distances[minIndex][0] == minDistance) return *donotMove;
     return distances[minIndex][1];
 }
+/*************************************************************************
+ Function name: MoveRobber
+ Input: int robberLocation[2], char action
+ Output: void
+ The function operation: move the robber for each action
+ ************************************************************************/
 void MoveRobber(int robberLocation[2], char action) {
     int currentRowRobber = robberLocation[0], currentColRobber = robberLocation[1];
     int newLocationRow = currentRowRobber, newLocationCol = currentColRobber;
@@ -471,7 +524,13 @@ void MoveRobber(int robberLocation[2], char action) {
     robberLocation[0] = newLocationRow;
     robberLocation[1] = newLocationCol;
 }
-int isThereWinningStrike(char board [3][3], char winType) {
+/*************************************************************************
+ Function name: IsThereWinningStrike
+ Input: char board [3][3], char winType
+ Output: int
+ The function operation: check in tic tac toe if there is a winning strike
+ ************************************************************************/
+int IsThereWinningStrike(char board [3][3], char winType) {
     int topLeft = board[0][0], topMiddle = board[0][1], topRight = board[0][2];
     int middleLeft = board[1][0], center = board[1][1], middleRight = board[1][2];
     int bottomLeft = board[2][0], bottomMiddle = board[2][1], bottomRight = board[2][2];
@@ -484,20 +543,40 @@ int isThereWinningStrike(char board [3][3], char winType) {
     int diagonal = (topLeft == center && center == bottomRight && bottomRight == winType) || (topRight == center && center == bottomLeft && bottomLeft  == winType);
     return horizontal || vertical || diagonal;
 }
+/*************************************************************************
+ Function name: IsInBoardTicTac
+ Input: int row, int col
+ Output: int
+ The function operation: check in tic tac toe if the location is valid
+ ************************************************************************/
 int IsInBoardTicTac(int row, int col) {
     return row < 3 && row > -1 && col < 3 && col > -1;
 }
+/*************************************************************************
+ Function name: IsLocationAvailableTicTacToe
+ Input:char v value in point
+ Output: int
+ The function operation: check is the location aviable tic tac toe game
+ ************************************************************************/
 int IsLocationAvailableTicTacToe (char v) {
     return v == TIC_TAC_EMPTY_CHAR;
 }
+/*************************************************************************
+ Function name: IsLocationUnAvailableTicTacToe
+ Input:char v value in point
+ Output: int
+ The function operation: check is the location in not aviable tic tac toe game
+ ************************************************************************/
 int IsLocationUnAvailableTicTacToe (char v) {
     return !IsLocationAvailableTicTacToe(v);
 }
-void GoToNextLocationTicTacBoard (int startingLocation[2]) {
-    /*
-     {--x}
-     {---}
-     {---}*/
+/*************************************************************************
+ Function name: ComputerMoveTicTacToe
+ Input:char v value in point
+ Output: void
+ The function operation: check is the location in not aviable tic tac toe game
+ ************************************************************************/
+void ComputerMoveTicTacToe (int startingLocation[2]) {
     int row = startingLocation[0], col = startingLocation[1];
     if (col == row && row == 2) {
         startingLocation[0] = 0;
@@ -509,6 +588,12 @@ void GoToNextLocationTicTacBoard (int startingLocation[2]) {
     else startingLocation[1] = col + 1;
     
 }
+/*************************************************************************
+ Function name: PirintTicTacBoard
+ Input: char board[3][3]
+ Output: int
+ The function operation: print the board in tic tac
+ ************************************************************************/
 void PirintTicTacBoard(char board[3][3]) {
     int i = 0;
     for (; i < 3; i++) {
@@ -517,6 +602,12 @@ void PirintTicTacBoard(char board[3][3]) {
         printf("\n");
     }
 }
+/*************************************************************************
+ Function name: OrderCopsArray
+ Input: int copsLocation [5][2], int maxRow, int maxCol
+ Output: void
+ The function operation: Oeder the cops array to print theme
+ ************************************************************************/
 void OrderCopsArray(int copsLocation [5][2], int maxRow, int maxCol) {
     int row = 0, count = 0;
     for (; row < maxRow; row++) {
@@ -530,6 +621,12 @@ void OrderCopsArray(int copsLocation [5][2], int maxRow, int maxCol) {
         }
     }
 }
+/*************************************************************************
+ Function name: IsBoardFull
+ Input: char board [3][3]
+ Output: int
+ The function operation: check if the board is full tic tac game
+ ************************************************************************/
 int IsBoardFull(char board [3][3]) {
     int i = 0;
     for (; i< 3; i++) {
