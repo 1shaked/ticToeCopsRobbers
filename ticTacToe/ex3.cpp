@@ -37,7 +37,8 @@ int IsInBoardTicTac(int row, int col);
 int IsLocationAvailableTicTacToe (char v);
 int IsLocationUnAvailableTicTacToe (char v);
 void GoToNextLocationTicTacBoard (int startingLocation[2]);
-void pirintTicTacBoard(char board[3][3]);
+void PirintTicTacBoard(char board[3][3]);
+void OrderCopsArray(int copsLocation [5][2], int maxRow, int maxCol);
 char firstName[10];
 char lastName[10];
 int board [MAX_SIZE][MAX_SIZE];
@@ -130,6 +131,7 @@ void CopsAndRobbers(void) {
             turns = turns + 1;
             printf("Cops:\n");
             int copsTurnIndex = 0;
+            OrderCopsArray(coptsLocations, row, col);
             for (; copsTurnIndex < copsSize; copsTurnIndex++) {
                 int rowLocationCop = coptsLocations[copsTurnIndex][0];
                 int colLocationCop = coptsLocations[copsTurnIndex][1];
@@ -165,7 +167,7 @@ void CopsAndRobbers(void) {
             int robberLocRow = roobberLocation[0], robberLocCol =  roobberLocation[1];
             if (board[robberLocRow][robberLocCol] == 1 ) {
                 // finishe the game
-                printf("The cops won!\n");
+                printf("The cops won!");
                 // printing what evet
                 break;
             }
@@ -267,13 +269,13 @@ void TicTacToe(void) {
         for (; j < 3; j++) ticTacToe[i][j] = TIC_TAC_EMPTY_CHAR;
     }
     // isThereWinningStrike(ticTacToe);
-    int computerStartingPoint [2] = {1,1};
+    int computerStartingPoint [2] = {0,0};
     int isComputerTurn = 0;
     while (1) {
-        pirintTicTacBoard(ticTacToe);
+        
         if (isComputerTurn) {
             // play computer
-            printf("computer played\n");
+            printf("Computer's turn\n");
             int rowStart = computerStartingPoint[0], colStart = computerStartingPoint[1];
             int available = 0;
             int locationFind = 0;
@@ -296,11 +298,11 @@ void TicTacToe(void) {
                 break;
             }
             isComputerTurn = 0;
-            
+            PirintTicTacBoard(ticTacToe);
             //
         } else {
             // play user
-            printf("Select a square (row, col)\n");
+            printf("Select a square [row, col]\n");
             int row, col;
             scanf("%d %d", &row, &col);
             // check if valid location
@@ -325,6 +327,7 @@ void TicTacToe(void) {
             printf("%s %s has lost\n", firstName, lastName);
             break;
         }
+        PirintTicTacBoard(ticTacToe);
     }
     
 }
@@ -341,6 +344,7 @@ void PrintBoard (int row, int col) {
         for(; colIndex < col ; colIndex++) PrintLocationForrmated(board[rowIndex][colIndex]);
         printf("\n");
     }
+    printf("\n");
 }
 int SetRows(void) {
     int row;
@@ -498,7 +502,7 @@ void GoToNextLocationTicTacBoard (int startingLocation[2]) {
     else startingLocation[1] = col + 1;
     
 }
-void pirintTicTacBoard(char board[3][3]) {
+void PirintTicTacBoard(char board[3][3]) {
     int i = 0;
     for (; i < 3; i++) {
         int j = 0;
@@ -506,6 +510,18 @@ void pirintTicTacBoard(char board[3][3]) {
         printf("\n");
     }
 }
-
+void OrderCopsArray(int copsLocation [5][2], int maxRow, int maxCol) {
+    int row = 0, count = 0;
+    for (; row < maxRow; row++) {
+        int col = 0;
+        for (; col < maxCol; col++) {
+            if (board[row][col] == 1) {
+                copsLocation[count][0] = row;
+                copsLocation[count][1] = col;
+                count = count + 1;
+            }
+        }
+    }
+}
 
 
